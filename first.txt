@@ -1,0 +1,286 @@
+配置
+
+jackluo@jackluo:~$ git config --global user.name "jackluo"
+
+jackluo@jackluo:~$ git config --global user.email "net.webjoy@gmail.com"
+
+jackluo@jackluo:~$ git config --global color.ui true
+
+jackluo@jackluo:~$ git config --global color.ui true
+
+jackluo@jackluo:~$ git config --global core.editor "vi"
+
+从头建立Repository(Demo):
+
+$　mkdir sandbox
+
+$   cd sandbox
+
+$   git init
+
+第一次 commit (demo):
+
+$   touch README
+
+$   git add README
+
+$   git status
+
+$  git commit -m "First Commit"
+
+修改看看Demo
+
+编辑README 做些变更
+
+$  git status
+
+$  git diff
+
+$  git add .
+
+(一次加入所有变更跟新增档案,但不包括删除的档案)
+
+$  git status
+
+$  git diff --cached
+
+$  git commit -m "Update README"
+
+只Commit 部分档案(demo)
+
+$   touch a.rb
+
+$   touch b.rb
+
+$   git add a.rb
+
+$   git commit "update a"
+
+$   git add b.rb
+
+$   git commit "update b"
+
+修改 a.rb 
+
+$  git add a.rb
+
+再次修改 a.rb
+
+git commit -m "commit a"
+
+这时commit 的内容是第一次修改当时的内容而已
+
+只commit 同一档案部分内容(demo)
+
+$  git add --patch
+
+    -y 加到staging
+
+    -n 不要加到staging
+
+    -s 查以折小一点hunk
+
+或者用 GUI 例如gitx 来选取
+
+删除和搬移档案(demo)
+
+$ git rm a.rb
+
+$ git mv b.rb c.rb
+
+$ git add .
+
+$ git commit "Remove a ,Rename b to c"
+
+没有copy ?因为Git 是追跟内容，你只要cp 即可,不用担心浪费空间.
+
+revert (还原 commit 记录)
+
+新增一笔 commit 来做还原
+
+例如本来的commit 是新增一行,那么revert commit 就会移除那一行
+
+$  git revert
+
+$  git revert HEAD^
+
+下标签(demo)
+
+$ git tag foo
+
+$ git tag foo <SHAI>
+
+$ git tag bar -m "some message"
+
+$ git tag 
+
+$ git tag -d foo
+
+$ git log 
+
+$ git log --oneline
+
+$ git log --oneline --decorate --graph
+
+git log 很多参数可以用,可以用GUI
+
+比较差异Diff
+
+git diff <SHAI>拿 working ree 比较
+
+砍掉 untracked 档案
+
+git clean -n 列出打算要清除的档案
+
+git clean -f 真的清除
+
+git clean -x 连 gitignore 里列的档案也要清掉
+
+Git 建立Local Repository
+$ mkdir project; cd project
+$ git init
+$ echo "hello" > hello.txt
+$ git add .
+$ git commit -m 'initial'
+Git clone 资料, 资料修改后上传
+$ git clone http://git.example.com/project.git
+$ cd project
+$ touch new_file.txt
+$ git add .
+$ git commit -m 'add new_file.txt'
+$ git push origin master
+$ git pull # 拉看看有没有更新
+Git clone 资料, 资料修改后上传.(分两个目录测试)
+$ mkdir /tmp/a /tmp/b
+$ cd /tmp/a
+$ git clone http://example.com/project_name.git
+$ cd /tmp/b
+$ git clone http://example.com/project_name.git
+$ echo "hello" > hello.html
+$ git add hello.html
+$ git commit -m 'add hello.html' # local commit.
+$ git push # 推到Server 上.
+$ cd /tmp/a
+$ git pull # 会看到hello.html
+Local Repository
+建立Local Repository 测试
+$ mkdir test; cd test
+$ git init
+建立新的branch (new-branch), 并于branch 去新增档案
+$ git branch new-branch # master
+$ git branch # master 
+ * master 
+   new-branch
+$ git checkout new-branch # 切换到新的branch
+$ git branch # new-branch 
+   master 
+ * new-branch
+测试Git staging area (git add . 之后的修改, 不会被commit 进去)
+$ touch new-branch_file.txt # new-branch
+$ git add . # new-branch
+$ echo "contents." > new-branch_file.txt # new-branch
+$ git commit # new-branch, commit的new-branch_file.txt会是空的,因为修改是在git add .之后.
+修改过的资料, 不要commit, 想直接切换到master(使用Git stash 将修改纪录暂存, 将目前new-branch 的资料merge 到mastermaster)
+$ git status # new-branch, 会显示new-branch_file.txt 有修改, 尚未commit.
+$ git checkout master # new-branch, 切换回master, 会出现错误: "You have local changes"
+$ git stash # new-branch, 先把修改的先暂存下来, 先不commit, 之后取出可用git stash pop 或git stash apply
+$ git status # new-branch, 会显示nothing to commit (暂时先不丢进commit 里面)
+$ git checkout master # master
+$ git merge new-branch # master, 会将new-branch_file.txt 的空档案合并进来.
+Git 于master 将档案砍掉, branch 是否还能存取此档案.
+$ ls # master, master_file.txt, new-branch_file.txt
+$ rm new-branch_file.txt # master, 删掉此档案
+$ git checkout new-branch # master, 切换到new-branch, 会出现错误: "pathspec 'branch' did not match any file(s) known to git."
+$ git stash # 先把修改的部份存起来(砍掉new-branch_file.txt)
+$ ls # master, 此时new-branch_file.txt 出现了. (因为尚未commit, stash 的动作并未做写入)
+$ git stash pop # master, 回复刚刚砍掉的状态, new-branch_file.txt 就消失了.
+$ git commit -m 'delete new-branch_file.txt in master' -a # 先砍掉.
+切换到Branch, 去跟master 做Merge
+$ git checkout new-branch
+$ git stash pop # new-branch
+$ git merge master # new-branch, 错误: "Entry 'new-branch_file.txt' not uptodate. Cannot merge.", 因为档案有修改.
+$ git diff master # 与master 做diff, 发现/dev/null vs file, 所以要把此档案砍掉.
+$ rm new-branch_file.txt
+$ git merge master # new-branch, 合并完成
+$ ls # new-branch, 只剩master_file.txt 这个档案
+由branch(new-branch) 环境和Master 分别建立新的branch (from-branch, from-master), 并测试未commit 资料状况, 新branch 的状态.
+$ touch new-branch_file.txt # new-branch, 测试未commit 资料状况, 新branch 的状态.
+$ git branch from-branch new-branch # new-branch, 会将new-branch 目前所有状态和资料都复制过去
+$ git checkout from-branch # from-branch
+$ git status # from-branch, 会看到new-branch_file.txt, 且这个档案尚未commit.
+$ git branch from-master master # from-branch, 依照master 开from-master 的branch
+$ git branch # from-branch 
+  from-branch 
+  from-master 
+  master 
+* new-branch
+$ git branch -d from-master # from-branch, 砍掉from-master 的branch
+$ git checkout -b from-master master # from-branch, 建立from-master 的branch, 并同时切换过去.
+$ git branch # from-master 
+  from-branch 
+* from-master 
+  master 
+  new-branch
+测试由Repository 还原档案内容
+$ echo "test" > master_file.txt
+$ git checkout master_file.txt # 还原回空档案(Repository 的版本是空档案)
+git pull 出现error: Entry 'filename' not uptodate. Cannot merge. 解法
+git stash # 目前目录有修改的资料, 先丢进暂存区
+git pull # 合并拉下来的修改
+git stash pop # 将修改的暂存区资料取出
+去看unmerge 的部份, 修改完成commit + push 即可.
+Repository 测试
+建立local 端master
+$ mkdir /tmp/a /tmp/b
+$ cd /tmp/a
+$ git clone http://git.example.com/project.git
+$ cd project/
+$ touch master-file
+$ git add .
+$ git commit -m 'add master-file'
+$ git push origin master
+$ git pull
+$ cd /tmp/b # 由此处来建立branch
+$ git clone http://git.example.com/project.git
+建立Repository 的branch
+$ git pull
+$ git push origin origin:refs/heads/reps-branch
+$ git fetch origin # 更新到最新版本(origin 是Repository 的版本)
+$ git branch -r
+$ git checkout --track -b reps-branch origin/reps-branch # 抓取reps-branch, 并将此branch 建立于local 的reps-branch
+$ git pull
+$ git branch 
+ * reps-branch 
+   master
+测试
+A 操作, 新增一个档案, commit 进入reps-branch, 于reps-branch commit
+$ cd /tmp/a/project
+$ git pull
+$ git push origin origin:refs/heads/reps-branch
+$ git fetch origin
+$ git branch -r
+$ git checkout --track -b reps-branch origin/reps-branch # 抓取reps-branch, 并将此branch 建立于local 的reps-branch
+$ git pull
+$ git branch 
+ * reps-branch 
+   master
+$ touch reps-branch.txt
+$ git add reps-branch.txt
+$ git commit -m 'add reps-branch.txt'
+$ git push
+$ git pull
+B 抓取reps-branch, 并修改资料, 再抓取reps 的branch
+$ cd /tmp/b/project
+$ git clone http://git.example.com/project.git
+$ cd project
+$ git fetch origin
+$ git pull
+$ git checkout --track -b reps-branch origin/reps-branch # 丢到reps-branch 去
+$ vim reps-branch.txt # 随便加些内容
+$ git add reps-branch.txt
+$ git commit -m 'add some content'
+$ git push
+$ git pull
+A 操作, 更新, 会抓到B commit 的资料(于reps-branch)
+$ cd /tmp/a/project
+$ git pull # 更新reps-branch.txt 内的资料(B commit 的)
